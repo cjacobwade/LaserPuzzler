@@ -8,6 +8,9 @@ public class StateControl : MonoBehaviour
 	[SerializeField] LookController lookController;
 	[SerializeField] OverheadController overheadController;
 
+	[SerializeField] Camera uiCamera;
+	[SerializeField] LayerMask uiLayer;
+
 	bool lookMode = false;
 
 	// Use this for initialization
@@ -19,12 +22,29 @@ public class StateControl : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
+		#if UNITY_EDITOR
+		if(Input.GetMouseButtonDown(0))
+		#elif UNITY_ANDROID || UNITY_IPHONE
+		if(Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)
+		#endif
+		{
+			RaycastHit hit;
+			if(Physics.Raycast(uiCamera.ScreenPointToRay(Input.mousePosition), out hit, Mathf.Infinity, uiLayer))
+			{
+				if(hit.transform.tag == "LookButton")
+					lookMode = true;
+			}
+		}
 
-	}
+		#if UNITY_EDITOR
+		if(Input.GetMouseButtonUp(0))
+		#elif UNITY_ANDROID || UNITY_IPHONE
+		if(Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Ended)
+		#endif
+		{
+			lookMode = false;
+		}
 
-	void OnGUI()
-	{
-		lookMode = GUI.Toggle (new Rect (Screen.width * 7/10, Screen.height * 7/10, Screen.width * 2.5f/10, Screen.height * 2.5f/10), lookMode, "LOOK");
 		if(lookMode)
 		{
 			lookController.enabled = true;

@@ -18,6 +18,7 @@ public class LookController : MonoBehaviour
 	// Use this for initialization
 	void OnEnable () 
 	{
+		transform.rotation = transform.parent.rotation;
 		lookCam.enabled = true;
 		lm.enabled = true;
 	}
@@ -33,7 +34,10 @@ public class LookController : MonoBehaviour
 	{
 		if(lookCam)
 		{
-			transform.rotation *= Quaternion.Euler (rotSpeed.y * Input.acceleration.y, rotSpeed.x * Input.acceleration.x, 0);
+			Vector3 acceleration = Input.acceleration;
+			acceleration.y = (acceleration.y + 0.5f) * 2;
+
+			transform.rotation *= Quaternion.Euler (rotSpeed.y * acceleration.y, rotSpeed.x * acceleration.x, 0);
 			transform.eulerAngles = Vector3.Scale (transform.eulerAngles, new Vector3 (1, 1, 0));
 		}
 	}

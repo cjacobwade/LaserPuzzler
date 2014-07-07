@@ -5,30 +5,24 @@ using System.Collections.Generic;
 public class PlayerNav : MonoBehaviour 
 {
 	public static SingletonBehaviour<PlayerNav> singleton = new SingletonBehaviour<PlayerNav>();
-
-	[SerializeField] Transform player;
 	NavMeshAgent nmAgent;
 
 	// Use this for initialization
 	void Awake () 
 	{
 		singleton.DontDestroyElseKill (this);
-		nmAgent = player.GetComponent<NavMeshAgent> ();
+		nmAgent = GetComponent<NavMeshAgent> ();
 	}
 	
 	// Update is called once per frame
 	void Update () 
 	{
-		if(Input.GetMouseButtonDown(0))
-		{
-			Vector3 targetPos = Camera.main.ScreenPointToRay(Input.mousePosition).direction;
 
-			RaycastHit hit;
-			if(Physics.Raycast(Camera.main.transform.position, targetPos, out hit))
-			{
-				nmAgent.SetDestination(hit.point);
-			}
-		}
+	}
+
+	public void SetDestination(Vector3 pos)
+	{
+		nmAgent.SetDestination (pos);
 	}
 
 	public void ClearPath()

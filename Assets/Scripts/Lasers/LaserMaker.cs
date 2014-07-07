@@ -17,8 +17,17 @@ public class LaserMaker : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
+		Vector3 laserDir = Vector3.zero;
+
+		#if UNITY_EDITOR
 		if(Input.GetMouseButtonDown(0))
-			CreateLaserWithColor(transform.position, Camera.main.ScreenPointToRay(Input.mousePosition).direction, 10, true);
+			laserDir = Camera.main.ScreenPointToRay(Input.mousePosition).direction;
+		#elif UNITY_ANDROID || UNITY_IPHONE
+		if(Input.touchCount > 1 && Input.GetTouch(1).phase == TouchPhase.Began)
+			laserDir = Camera.main.ScreenPointToRay(Input.GetTouch(1).position).direction;
+		#endif
+
+		CreateLaserWithColor(transform.position, laserDir, 10, true);
 	}
 	
 	public GameObject CreateLaser(Vector3 pos, Vector3 dir, int maxHits, bool fromCam)
@@ -46,6 +55,7 @@ public class LaserMaker : MonoBehaviour
 	{
 		GameObject laserObj = CreateLaser (pos, dir, maxHits, fromCam);
 		Laser laser = laserObj.GetComponent<Laser> ();
+
 		laser.startColor = endColor;
 		laser.endColor = startColor;
 		laser.SetColors();
